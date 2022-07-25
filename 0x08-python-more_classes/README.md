@@ -1,2 +1,1 @@
-# 0x08. Python - More Classes and Objects
-**Week 19**
+codes for 0x08
