@@ -1,29 +1,20 @@
 #!/usr/bin/python3
-from sys import argv
-import MySQLdb
+"""Filter cities"""
 
 
-def sqlConection():
-    try:
-        db_connection = MySQLdb.connect(host="localhost", port=3306,
-                                        user=argv[1], password=argv[2],
-                                        db=argv[3], charset="utf8")
-    except Exception:
-        print("Can't connect to database")
-        return 0
-    cur = db_connection.cursor()
-    string = "SELECT c.name FROM cities AS c JOIN states AS s ON \
-            c.state_id=s.id WHERE s.name = '{name}' ORDER BY c.state_id ASC"
-    cur.execute(string.format(name=argv[4]))
-    query_rows = cur.fetchall()
-    for row in query_rows:
-        if row != query_rows[-1]:
-            print(row[0], end=", ")
-        else:
-            print(row[0], end="")
-    print()
-    cur.close()
-    db_connection.close()
-
-
-sqlConection()
+if __name__ == "__main__":
+    from sys import argv
+    import MySQLdb
+    data = MySQLdb.connect(user=argv[1], passwd=argv[2], db=argv[3])
+    a = data.cursor()
+    check = (argv[4], )
+    a.execute("SELECT cities.name FROM cities INNER JOIN states\
+    ON states.id = cities.state_id WHERE states.name = %s\
+    ORDER BY cities.id ASC", check)
+    x = a.fetchall()
+    cities = []
+    for i in x:
+        cities.append(i[0])
+    print(', '.join(cities))
+    a.close()
+    data.close()

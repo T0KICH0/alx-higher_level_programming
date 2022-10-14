@@ -1,14 +1,12 @@
 #!/usr/bin/python3
-"""Importing"""
-from sqlalchemy import Column, Integer, String
-from model_state import Base
-from sqlalchemy import ForeignKey
+"""Class city"""
+from model_state import Base, State
+from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy.orm import relationship
 
 
 class City(Base):
-    """Class inherits from base"""
     __tablename__ = 'cities'
-    id = Column(Integer, primary_key=True, nullable=False, unique=True,
-                autoincrement=True)
+    id = Column('id', Integer, primary_key=True, nullable=False)
     name = Column(String(128), nullable=False)
     state_id = Column(Integer, ForeignKey('states.id'), nullable=False)

@@ -1,28 +1,19 @@
 #!/usr/bin/python3
-"""
-Start database
-"""
-
-from model_state import Base, State
-from sqlalchemy import (create_engine)
-from sqlalchemy.orm import sessionmaker
-from sys import argv
+"""Prints the first state obj, takes 3 args"""
 
 
 if __name__ == "__main__":
-    """
-    Initialize database and quering
-    """
-    sql = 'mysql+mysqldb://{}:{}@localhost:3306/{}'
-    engine = create_engine(sql.format(argv[1],
-                                      argv[2], argv[3]), pool_pre_ping=True)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker()
-    Session.configure(bind=engine)
-    session = Session()
-    try:
-        states = session.query(State.id, State.name).first()
-        print("{}: {}".format(states.id, states.name))
-    except Exception:
+    from sys import argv
+    from model_state import State, Base
+    from sqlalchemy import (create_engine)
+    from sqlalchemy.orm import sessionmaker
+    engin = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.format(
+        argv[1], argv[2], argv[3]), pool_pre_ping=True)
+    Base.metadata.create_all(engin)
+    Session = sessionmaker(bind=engin)
+    st = Session().query(State).first()
+    if st:
+        print("{}: {}".format(st.id, st.name))
+    else:
         print("Nothing")
-    session.close()
+    session().close()

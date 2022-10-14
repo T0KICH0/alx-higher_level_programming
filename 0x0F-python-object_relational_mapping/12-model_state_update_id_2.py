@@ -1,23 +1,19 @@
 #!/usr/bin/python3
-"""Initialize database"""
-from model_state import Base, State
-from sqlalchemy import (create_engine)
-from sqlalchemy.orm import sessionmaker
-from sys import argv
+"""Change the name of a State obj"""
 
 
 if __name__ == "__main__":
-    """
-    Conecting database and quering
-    """
-    sql = 'mysql+mysqldb://{}:{}@localhost:3306/{}'
-    engine = create_engine(sql.format(argv[1],
-                                      argv[2], argv[3]), pool_pre_ping=True)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker()
-    Session.configure(bind=engine)
+
+    from sys import argv
+    from model_state import State, Base
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.format(
+        argv[1], argv[2], argv[3]), pool_pre_ping=True)
+    Session = sessionmaker(bind=engine)
     session = Session()
-    x = session.query(State).get(2)
-    x.name = "New Mexico"
+    Base.metadata.create_all(engine)
+    st = session.query(State).filter_by(id=2).first()
+    st.name = "New Mexico"
     session.commit()
     session.close()

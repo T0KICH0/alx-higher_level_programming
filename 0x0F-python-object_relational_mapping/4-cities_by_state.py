@@ -1,29 +1,16 @@
 #!/usr/bin/python3
-from sys import argv
-import MySQLdb
+"""List states in database"""
 
 
-def sqlConection():
-    """
-    Conecting and quering to database
-    """
-    try:
-        db_connection = MySQLdb.connect(host="localhost", port=3306,
-                                        user=argv[1], password=argv[2],
-                                        db=argv[3], charset="utf8")
-    except Exception:
-        print("Can't connect to database")
-        return 0
-    cur = db_connection.cursor()
-    sql = "SELECT c.id,c.name, s.name FROM cities AS c JOIN states AS s "
-    strin = "WHERE c.state_id=s.id ORDER BY id ASC"
-    sqlc = sql + strin
-    cur.execute(sqlc)
-    query_rows = cur.fetchall()
-    for row in query_rows:
-        print(row)
-    cur.close()
-    db_connection.close()
-
-
-sqlConection()
+if __name__ == "__main__":
+    from sys import argv
+    import MySQLdb
+    data = MySQLdb.connect(user=argv[1], passwd=argv[2], db=argv[3])
+    a = data.cursor()
+    a.execute("SELECT cities.id, cities.name, states.name FROM cities\
+    JOIN states ON states.id = cities.state_id ORDER BY cities.id ASC;")
+    x = a.fetchall()
+    for i in x:
+        print(i)
+    a.close()
+    data.close()
