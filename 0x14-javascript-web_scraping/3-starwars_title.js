@@ -1,16 +1,8 @@
 #!/usr/bin/node
+const request = require('request').default;
+const ID = process.argv[2];
+const endPoint = `https://swapi-api.hbtn.io/api/films/${ID}`;
 
-const request = require('request');
-const episodeNum = process.argv[2];
-const API_URL = 'https://swapi-api.hbtn.io/api/films/';
-
-request(API_URL + episodeNum, function (err, response, body) {
-  if (err) {
-    console.log(err);
-  } else if (response.statusCode === 200) {
-    const responseJSON = JSON.parse(body);
-    console.log(responseJSON.title);
-  } else {
-    console.log('Error code: ' + response.statusCode);
-  }
-});
+request.get(endPoint)
+  .then(res => console.log(res.data.title))
+  .catch(err => console.log(err.message));
