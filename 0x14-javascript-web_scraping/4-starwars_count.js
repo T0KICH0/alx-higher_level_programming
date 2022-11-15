@@ -1,16 +1,24 @@
 #!/usr/bin/node
-const axios = require('axios');
-const apiUrl = process.argv[2];
 
-axios.get(apiUrl)
-  .then(({ data }) => {
+const request = require('request');
+const url = process.argv[2];
+
+request(url, function (err, response, body) {
+  if (err) {
+    console.log(err);
+  } else if (response.statusCode === 200) {
+    const films = JSON.parse(body).results;
     let count = 0;
-    const results = data.results;
-    results.forEach(film => {
-      film.characters.forEach(char => {
-        if (char.includes('18')) count++;
-      });
-    });
+    for (const filmIndex in films) {
+      const filmChars = films[filmIndex].characters;
+      for (const charIndex in filmChars) {
+        if (filmChars[charIndex].includes('18')) {
+          count++;
+        }
+      }
+    }
     console.log(count);
-  })
-  .catch(err => console.log(err.message));
+  } else {
+    console.log('An error occured. Status code: ' + response.statusCode);
+  }
+});

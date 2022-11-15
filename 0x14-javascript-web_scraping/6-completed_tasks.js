@@ -1,28 +1,26 @@
 #!/usr/bin/node
-const process = require('process');
-const axios = require('axios').default;
 
-const URL = process.argv[2];
+const request = require('request');
+const url = process.argv[2];
 
-axios.get(URL, {
-}).then(response => {
-  const todo = response.data;
-  const usersWithCompTasks = {};
-  for (let i = 0; i < todo.length; i++) {
-    if (todo[i].completed === true) {
-      const key = todo[i].userId;
-      if (usersWithCompTasks[key] === undefined) {
-        usersWithCompTasks[key] = 1;
-      } else {
-        let currTasks = usersWithCompTasks[key];
-        currTasks += 1;
-        usersWithCompTasks[key] = currTasks;
+request(url, function (err, response, body) {
+  if (err) {
+    console.log(err);
+  } else if (response.statusCode === 200) {
+    const completed = {};
+    const tasks = JSON.parse(body);
+    for (const i in tasks) {
+      const task = tasks[i];
+      if (task.completed === true) {
+        if (completed[task.userId] === undefined) {
+          completed[task.userId] = 1;
+        } else {
+          completed[task.userId]++;
+        }
       }
     }
-  }
-  console.log(usersWithCompTasks);
-}).catch(error => {
-  if (error) {
-    console.log(error.message);
+    console.log(completed);
+  } else {
+    console.log('An error occured. Status code: ' + response.statusCode);
   }
 });
